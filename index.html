@@ -18,9 +18,8 @@
     <meta property="og:url" content="{{{url}}}" />
     {{/meta}}
 	
-   	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
- 
     <!-- ui only component -->
+  	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
   	<link rel="stylesheet" href="https://app.voxxlr.com/ui.css">
     <script src="https://app.voxxlr.com/ui.js"></script>
 
@@ -48,63 +47,6 @@
  
 			viewer.on("point.click", async (event)=>
     		{
-				switch (event.meta.target)  
-				{
-					case "text":
-						let popup = document.querySelector("vx-sticky")
-						popup.querySelector("div").innerHTML = event.meta.html;
-						popup.open(event);
-						break;
-						
-					case "link":
-						let modal = document.getElementById("link-dialog");
-						let iframe = modal.querySelector("iframe");
-						if (iframe.src !== event.meta.href)
-						{
-							iframe.src = event.meta.href;
-						}
-						modal.hidden = false;
-	  					break;
-	  					
-					case "image":
-							
-			   	   		fetch(`https://doc.voxxlr.com/file/${event.id}/`, 
-	   	   			  	{ 
-	   	   			  		method: 'GET', 
-	   	   			  		headers: new Headers({
-	   	   			  	     'Authorization': `Bearer ${decodeURIComponent("{{{token}}}")}`, 
-	   	   			  	     'Content-Type': "application/json",
-	   	   			  	     'Content-Encoding': 'gzip'
-	   	   			  		})
-	   	   			  	}).then(async (response) =>
-	   	   			  	{
-	   				  		let list = await response.json();
-	   				  		
-	   				  		let display = [];
-							for (var i=event.meta.list.length-1; i>=0; i--)
-							{
-								let image = event.meta.list[i];
-								let index = list.findIndex((entry) => { return image.path ==  entry.path });
-								if (index != -1)
-								{
-									display.push({ url:list[index].url, caption: image.title });
-									image.url = list[index].url;
-								}
-								else
-								{
-									event.meta.list.splice(i,1);
-								}
-							}
-							
-							let modal = document.getElementById("image-dialog");
-							let images = modal.querySelector("ui-images");
-							images.init(display);
-							modal.hidden = false;
-	   	   			  	});
-	  					break;
-					case "panorama":
-	  					break;
-				}
     		});
 
  			let controller = {};
@@ -179,34 +121,11 @@
 				{
 					viewer.post("point.create", args.meta.point[id]);
 				}
-    			
-				for (var id in args.meta.import || {})
-       			{
-    				await fetch(`https://app.voxxlr.com/load/${args.meta.import[id].document}`, 
-				  	{ 
-				  		method: 'POST', 
-				  		headers: new Headers({
-				  	     'Authorization': `Bearer {{{key}}}`, 
-				  	     'Content-Type': "application/json",
-				  	     'Content-Encoding': 'gzip'
-				  		}),
-				  		body: JSON.stringify({})
-				  	}).then(async (response) =>
-				  	{
-						let dataset = await response.json();
-						await viewer.post("import.create", dataset, args.meta.import[id]);
-				  	});
-       			}
-   			
- 	
+    	 	
 	   			let viewpoint = document.querySelector(".viewpoint:first-child");
   				if (viewpoint)
 	   		    {
   					viewpoint.dispatchEvent(new CustomEvent("click"));
-  					/*
-					let index = Array.prototype.indexOf.call(selected.parentNode.children, selected);
-		   			viewer.post("viewpoint", viewpoints[index]);
-		   			*/
 	   		    }
 	   			else
    				{
@@ -231,11 +150,11 @@
    				let img = aside.querySelector("img");
    				if (aside.classList.contains("closed"))
 				{
-   					img.src = "https://app.voxxlr.com/voxxlr/viewer/close.png";
+   					img.src = "https://voxxlr.github.io/template/close.png";
 				}
    				else
 				{
-   					img.src = "https://app.voxxlr.com/voxxlr/viewer/open.png";
+   					img.src = "https://voxxlr.github.io/template/open.png";
 				}
 		
    				aside.classList.toggle("closed");
