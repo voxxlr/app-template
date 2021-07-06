@@ -28,8 +28,7 @@
     <script src="https://app.voxxlr.com/vx-inventory.js"></script>
     {{/launchpad}}
     <script src="https://app.voxxlr.com/vx-viewer.js"></script>
-    <script src="https://app.voxxlr.com/vx-sticky.js"></script>
-
+ 
     <!-- app components -->
 
     <script>
@@ -39,76 +38,9 @@
         window.addEventListener("load", async function( event ) 
         {
             let viewer = document.querySelector("vx-viewer");
-            
-            viewer.on("viewpoint", event =>
-            {
-                viewer.post(`*.unselect`, {});
-            })
- 
-            viewer.on("point.click", async (event)=>
-            {
-            });
-
-            let controller = {};
-            
-            viewer.on("controller", (event)=> 
-            {
-                controller = event;
-            })
-                
-            viewer.on(["import.dblclick", "model.dblclick", "cloud.dblclick", "map.dblclick"], (event)=>
-            {
-                if (controller.name == "walker")
-                {
-                    if (event.normal.y > 0.8)
-                    {
-                        viewer.post("controller.target", event.xyz);
-                    }
-                }
-                else
-                {
-                    viewer.post("controller.target", event.xyz);
-                }
-            });
-    
-            viewer.on("viewer.mousemove", (event)=>
-            {
-                if (controller.name == "walker" && event.normal.y < 0.8)
-                {
-                    viewer.post("target", { color: [1.0,0.502,0.0] } );
-                }
-                else
-                {
-                    viewer.post("target", { color: [0.0,0.502,1.00] } );
-                }
-            });      			
-            
+                    
             viewer.on("viewer.load", async (args, param) => 
             { 
-                let div = document.getElementById("viewpoints");
-                let template = document.querySelector("template");
-                let viewpoints = args.meta.viewpoints || [];
-                viewpoints.forEach((viewpoint) => 
-                {
-                    let entry = template.content.cloneNode(true);
-                    entry.querySelector("h4").textContent = viewpoint.name;
-                    entry.querySelector("p").textContent = viewpoint.comment;
-                    entry.firstElementChild.addEventListener('click', (event) => 
-                    {
-                        let selected = document.querySelector(".viewpoint.selected");
-                        if (selected)
-                        {
-                            selected.classList.remove("selected");
-                        }
-                        event.currentTarget.querySelector("h4").classList.toggle("visited", true);
-                        event.currentTarget.classList.add("selected");
-                        
-                        let index = Array.prototype.indexOf.call(event.currentTarget.parentNode.children, event.currentTarget);
-                        viewer.post("viewpoint", viewpoints[index]);
-                    });
-                    div.appendChild(entry);
-                });
-                
                 for (var id in args.meta.polygon || {})
                 {
                     viewer.post("polygon.create", args.meta.polygon[id]);
@@ -121,43 +53,6 @@
                 {
                     viewer.post("point.create", args.meta.point[id]);
                 }
-            
-                let viewpoint = document.querySelector(".viewpoint:first-child");
-                if (viewpoint)
-                {
-                    viewpoint.dispatchEvent(new CustomEvent("click"));
-                }
-                else
-                {
-                    viewer.post("controller", { name: "orbiter" });
-                }
-                
-                document.querySelector("aside > a").dispatchEvent(new CustomEvent("click"));
-            });
-            
-            viewer.on("viewer.unload",  async (args)=>
-            {
-                let div = document.querySelector("ul");
-                while (div.firstElementChild)
-                {
-                    div.firstElementChild.remove();
-                }
-            });
-            
-            document.querySelector("aside > a").addEventListener("click", (event) => 
-            {
-                let aside = event.currentTarget.parentNode;
-                let img = aside.querySelector("img");
-                if (aside.classList.contains("closed"))
-                {
-                    img.src = "https://voxxlr.github.io/template/close.png";
-                }
-                else
-                {
-                    img.src = "https://voxxlr.github.io/template/open.png";
-                }
-        
-                aside.classList.toggle("closed");
             });
             
             {{#password}}
@@ -166,6 +61,7 @@
                 await viewer.init(decodeURIComponent("{{{token}}}"));
             })
             {{/password}}
+            
             {{^password}}
             await viewer.init(decodeURIComponent("{{{token}}}"));
             {{/password}}
@@ -199,10 +95,7 @@
             position: relative;
             width: 100%;
             height: 100%;
-            overflow:hidden;
-            border: none;
-            margin: 0;
-            font-size: 13px;
+            display: flex;
         }
         
         body  { display: flex; }
@@ -218,54 +111,6 @@
             transition: margin-left .3s linear;
             z-index: 9;
         }
-        aside.closed { margin-left: -460px; }
-        aside h2  { color: #fff; }
-        aside h4  { color: rgb(0, 102, 204); margin: 0; font-size: 1.2em; }
-        aside p  { margin: 0; color: #888; }
-        aside .viewpoint
-        {
-            position: relative;
-            margin-top:1em;
-            padding: 1.0em 0.8em 1.0em 0.8em;
-            border: 1px solid white;
-        }
-        aside .viewpoint p { color: #fff; }
-        aside .viewpoint:hover { background: #444; }
-        aside .viewpoint.selected 
-        { 
-            border: 2px solid rgb(0, 102, 204);;
-            background: #444; 
-        }
-        aside hr  { margin-bottom: 50px; }
-        aside .logo 
-        {
-            width: 120px;
-            height: 120px;
-            margin-left: 40px;
-            margin-bottom: 60px;
-            display: block;
-        }
-        aside .powered
-        {
-            position:absolute;
-            font-size: 12px;
-            right: 35px;
-            top: 140px;
-            color: #888;
-        }		
-        
-        aside a.open
-        {
-            position:absolute;
-            right: 0;
-            top: 20px;
-            margin-right: -32px;
-        }
-
-        aside a.home
-        {
-            display:  block;
-        }
         
         vx-viewer
         {
@@ -274,20 +119,7 @@
             width: 100%;
             height: 100%;
         }
-        
-        vx-sticky > div
-        {
-            background: #222;
-            color:  white;
-            padding: 1em;
-        }
-        
-        #link-dialog iframe
-        {
-            position: relative;
-            height: 60vh;
-            width: 60vw;
-        }
+
         
         {{#launchpad}}
         button[name='inventory'] 
@@ -302,17 +134,9 @@
         
 </head>
 
-<template>
-    <div class="viewpoint">
-        <h4>{{{name}}}</h4>
-        <p></p>
-    </div>
-</template>
-
 <body>
 
-    <aside class="closed">
-        <a class="open"><img src="https://voxxlr.github.io/template/open.png"></a>
+    <aside>
         <a href="https://www.voxxlr.com">
             <div class="powered">powered by www.voxxlr.com</div>
             <img class="logo" src="https://www.voxxlr.com/images/logo150.png">
@@ -333,19 +157,8 @@
             </ui-tooltip>				
         </button>
         {{/launchpad}}
-        <vx-sticky hidden>
-            <div></div>
-        </vx-sticky>
     </vx-viewer>
 
-    <ui-modal id="image-dialog" hidden close>
-        <ui-images></ui-images>
-    </ui-modal>
-    
-    <ui-modal id="link-dialog" hidden close>
-        <iframe src ="" style=" resize: both;"></iframe>
-    </ui-modal>
- 
 {{#password}}
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
     <ui-password password="{{{password}}}"></ui-password> 	
