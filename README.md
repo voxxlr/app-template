@@ -1,4 +1,4 @@
-# Voxx App Template
+# Voxxlr App Template
 Clone this repository to create a custom hosted App for the Voxxlr cloud platform. Install the App via the launchpad on the Voxxlr homepage by entering the url to the index.html. The launchpad then lets you create dedicated _links_ to the Apps using API keys that specify subsets of the data in your account. When serving the index.html the Voxxlr web server provides the following mustache.js tags. The index.html in this repository provides an example of how the tags are used to configure and App.
 
 ---
