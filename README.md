@@ -25,3 +25,10 @@ If a _link_ loads an initial document then this tag will contain a valid access 
 **{{{launchpad}}}**
 
 The launchpad tag is only present if an App is opened via the launchpad on the homepage. 
+
+
+
+
+
+## License
+[MIT](https://choosealicense.com/licenses/mit/)
