@@ -28,7 +28,5 @@ The launchpad tag is only present if an App is opened via the launchpad on the h
 
 
 
-
-
 ## License
-[MIT](https://choosealicense.com/licenses/mit/)
+The Voxxlr App SDK is licensed under the Affero GPL V3 license.
